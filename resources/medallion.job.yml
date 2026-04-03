@@ -1,58 +1,7 @@
-# resources:
-#   jobs:
-#     medallion_ny:
-#       name: medallion_ny
-#       tasks:
-#         - task_key: bronze
-#           notebook_task:
-#             notebook_path: ../src/bronze.ipynb
-#             base_parameters:
-#               catalog: ${var.catalog}
-#             source: WORKSPACE
-#         - task_key: silver_gold
-#           depends_on:
-#             - task_key: bronze
-#           notebook_task:
-#             notebook_path: ../src/silver_gold.ipynb
-#             base_parameters:
-#               catalog: ${var.catalog}
-#             source: WORKSPACE
-#       queue:
-#         enabled: true
-#       performance_target: PERFORMANCE_OPTIMIZED
-
-
-
 resources:
   jobs:
     shiva_assessment_job:
       name: shiva_assessment_job
-      tasks:
-        - task_key: bronze_task
-          notebook_task:
-            notebook_path: ../src/01_bronze.ipynb
-            base_parameters:
-              catalog_param: ${var.catalog}
-              schema_param: "bronze"
-
-        - task_key: silver_task
-          depends_on:
-            - task_key: bronze_task
-          notebook_task:
-            notebook_path: ../src/02_silver.ipynb
-            base_parameters:
-              catalog_param: ${var.catalog}
-              schema_param: "silver"
-
-        - task_key: gold_task
-          depends_on:
-            - task_key: silver_task
-          notebook_task:
-            notebook_path: ../src/03_gold.ipynb
-            base_parameters:
-              catalog_param: ${var.catalog}
-              schema_param: ${var.schema} # Uses the "gold" default from databricks.yml
-
       job_clusters:
         - job_cluster_key: assessment_cluster
           new_cluster:
@@ -60,4 +9,38 @@ resources:
             node_type_id: Standard_DS3_v2
             num_workers: 1
 
-# tet
+      tasks:
+        - task_key: bronze_task
+          job_cluster_key: assessment_cluster
+          notebook_task:
+            notebook_path: ../src/01_bronze_ingestion.ipynb
+            base_parameters:
+              catalog_param: ${var.catalog}
+              schema_param: "bronze"
+            source: WORKSPACE
+
+        - task_key: silver_task
+          job_cluster_key: assessment_cluster
+          depends_on:
+            - task_key: bronze_task
+          notebook_task:
+            notebook_path: ../src/02_silver_cleaning.ipynb
+            base_parameters:
+              catalog_param: ${var.catalog}
+              schema_param: "silver"
+            source: WORKSPACE
+
+        - task_key: gold_task
+          job_cluster_key: assessment_cluster
+          depends_on:
+            - task_key: silver_task
+          notebook_task:
+            notebook_path: ../src/03_gold_transformation.ipynb
+            base_parameters:
+              catalog_param: ${var.catalog}
+              schema_param: ${var.schema}
+            source: WORKSPACE
+
+      queue:
+        enabled: true
+      performance_target: PERFORMANCE_OPTIMIZED
