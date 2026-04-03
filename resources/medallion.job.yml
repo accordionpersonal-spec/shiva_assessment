@@ -32,5 +32,14 @@ resources:
               schema_param: ${var.schema}
             source: WORKSPACE
 
+        - task_key: spark_optimization_task
+          depends_on:
+            - task_key: gold_task
+          notebook_task:
+            notebook_path: ../src/04_spark_optimization.ipynb
+            base_parameters:
+              catalog_param: ${var.catalog}
+            source: WORKSPACE
+
       queue:
         enabled: true
