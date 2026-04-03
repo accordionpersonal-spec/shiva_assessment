@@ -1,0 +1,104 @@
+# name: Databricks CI/CD
+
+# on:
+#   push:
+#     branches:
+#       - dev
+#       - uat
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout Repo
+#         uses: actions/checkout@v3
+
+#       - name: Install Databricks CLI
+#         run: |
+#           curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+#           echo "$HOME/.databricks/bin" >> $GITHUB_PATH
+
+#       - name: Verify CLI
+#         run: |
+#             which databricks
+#             databricks --version
+            
+#       - name: Set Environment Variables
+#         run: |
+#           echo "DATABRICKS_HOST=${{ secrets.DATABRICKS_HOST }}" >> $GITHUB_ENV
+#           echo "DATABRICKS_TOKEN=${{ secrets.DATABRICKS_TOKEN }}" >> $GITHUB_ENV
+
+#       - name: Test Databricks Auth
+#         run: databricks current-user me
+
+#       - name: Validate Bundle
+#         run: databricks bundle validate
+
+#       - name: Deploy to Dev
+#         if: github.ref == 'refs/heads/dev'
+#         run: databricks bundle deploy --target dev
+
+#       - name: Deploy to UAT
+#         if: github.ref == 'refs/heads/uat'
+#         run: databricks bundle deploy --target uat
+
+#       - name: Deploy to Prod
+#         if: github.ref == 'refs/heads/main'
+#         run: databricks bundle deploy --target prod
+
+
+
+
+
+name: Databricks CI/CD
+
+on:
+  push:
+    branches:
+      - dev   # Pushing here triggers Dev deployment
+      - uat   # Pushing here triggers UAT deployment
+      - main  # Pushing here triggers Prod deployment
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Databricks CLI
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+          echo "$HOME/.databricks/bin" >> $GITHUB_PATH
+
+      - name: Validate Bundle
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle validate
+
+      # DEPLOY TO DEV
+      - name: Deploy to Dev
+        if: github.ref == 'refs/heads/dev'
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle deploy --target dev
+
+      # DEPLOY TO UAT
+      - name: Deploy to UAT
+        if: github.ref == 'refs/heads/uat'
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle deploy --target uat
+
+      # DEPLOY TO PROD
+      - name: Deploy to Prod
+        if: github.ref == 'refs/heads/main'
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run: databricks bundle deploy --target prod
