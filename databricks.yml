@@ -8,9 +8,9 @@
 #   catalog:
 #     description: "Catalog per environment"
 
-# include:
-#   - resources/*.yml
-#   - resources/*/*.yml
+include:
+  - resources/*.yml
+  - resources/*/*.yml
 
 # targets:
 #   dev:
