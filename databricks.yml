@@ -65,7 +65,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://dbc-effc4163-c9de.cloud.databricks.net
+      host: https://dbc-effc4163-c9de.cloud.databricks.com
       root_path: /Workspace/Users/accordionpersonal@gmail.com/.bundle/${bundle.name}/dev
     variables:
       catalog: my_assessment
@@ -75,7 +75,7 @@ targets:
   uat:
     mode: production
     workspace:
-      host: https://dbc-effc4163-c9de.cloud.databricks.net
+      host: https://dbc-effc4163-c9de.cloud.databricks.com
       root_path: /Workspace/Users/accordionpersonal@gmail.com/.bundle/${bundle.name}/uat
     variables:
       catalog: my_assessment_uat
@@ -85,7 +85,7 @@ targets:
   prod:
     mode: production
     workspace:
-      host: https://dbc-effc4163-c9de.cloud.databricks.net
+      host: https://dbc-effc4163-c9de.cloud.databricks.com
       root_path: /Workspace/Users/accordionpersonal@gmail.com/.bundle/${bundle.name}/prod
     variables:
       catalog: my_assessment_prod
