@@ -40,6 +40,14 @@ resources:
             base_parameters:
               catalog_param: ${var.catalog}
             source: WORKSPACE
+        - task_key: delta_optimization_task
+          depends_on:
+            - task_key: spark_optimization_task
+          notebook_task:
+            notebook_path: ../src/05_delta_optimization.ipynb
+            base_parameters:
+              catalog_param: ${var.catalog}
+            source: WORKSPACE
 
       queue:
         enabled: true
